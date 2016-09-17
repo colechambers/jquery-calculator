@@ -47,5 +47,11 @@ $(document).ready(function() {
       }
     }
   }
-
+  function check(result) {
+    if (isNaN(result)) {
+      $('#screen').text('ERROR');
+    }else {
+      $('#screen').text(result);
+    }
+  }
 });
