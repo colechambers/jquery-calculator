@@ -1,64 +1,51 @@
-(function() {
-  'use strict';
-
-  var $screen = $('#screen');
-
-  $('#clear').on('click', function() {
-    $screen.text('');
-  });
-
-  $('#equals').on('click', function() {
-    var screen = $screen.text();
-
-    if (screen === 'Error') {
-      return;
-    }
-
-    var regexp = /^(\-?\d+)(\+|\-|x|÷)(\-?\d+)$/;
-
-    var matches = screen.match(regexp);
-
-    if (matches === null) {
-      $screen.text('Error');
-      return;
-    }
-
-    var operand1 = parseInt(matches[1], 10);
-    var operand2 = parseInt(matches[3], 10);
-    var operator = matches[2];
-    var total;
-
-    if (operator === '+') {
-      total = operand1 + operand2;
-    }
-    else if (operator === '-') {
-      total = operand1 - operand2;
-    }
-    else if (operator === 'x') {
-      total = operand1 * operand2;
-    }
-    else if (operator === '÷') {
-      if (operand2 === 0) {
-        $screen.text('Error');
-        return;
+$(document).ready(function() {
+    $('span').click(function() {
+      //http://api.jquery.com/attr/
+      if($(this).attr('id') === "clear") {
+        $('#screen').text("");
       }
-
-      total = operand1 / operand2;
+      //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this
+      else if($(this).attr('id') === "equals") {
+        calculate();
+      }else {
+        $('#screen').append($(this).text());
+      }
+    });
+    function calculate() {
+      if($('#screen').text === "") {
+      }else {
+        var inner = $('#screen').text();
+        var operator = "";
+        var op2Index;
+        var op1 = "";
+        var op2 = "";
+        var result;
+        for (var i = 0; i < inner.length; i++) {
+        if (inner[i] == '÷' || inner[i] == 'x' || inner[i] == '+' || inner[i] == '-') {
+          op2Index = i;
+          operator = inner[i];
+        }
+        op1 = inner.substring(0, op2Index);
+        op2 = inner.substring((op2Index+1), inner.length);
+        op1 = parseInt(op1);
+        op2 = parseInt(op2);
+        if(operator === '÷') {
+        result = op1 / op2;
+        check(result);
+        }
+        else if (operator === 'x') {
+        result = op1 * op2;
+        check(result);
+        }
+        else if (operator === '+') {
+        result = op1 + op2;
+        check(result);
+        }else {
+        result = op1 - op2;
+        check(result);
+        }
+      }
     }
+  }
 
-    var nextScreen = total.toString();
-
-    $screen.text(nextScreen);
-  });
-
-  $('.buttons').on('click', 'span:not(#clear):not(#equals)', function(event) {
-    var screen = $screen.text();
-
-    if (screen === 'Error') {
-      return;
-    }
-
-    var nextScreen = screen + event.target.textContent;
-    $screen.text(nextScreen);
-  });
-})();
+});
